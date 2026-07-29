@@ -17,6 +17,11 @@ pool.connect().then(function() {
 app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(express.json());
 
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/html/index.html"))
+})
+
+
 app.listen(PORT, hostname, () => {
     console.log(`http://${hostname}:${PORT}`);
 });
