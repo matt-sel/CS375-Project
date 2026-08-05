@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/register.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+  </head>
+
+  <body>
+    <header class="navbar">
+      <a href="/" class="navbar-name">Public Tickets</a>
+      <nav class="navbar-links">
+        <a href="/">Home</a>
+        <a href="/tickets">Tickets</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Register</h1>
+      <div id="registerForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="company">Company</label>
+        <select id="company" name="company" required>
+          <option value="">Select a company</option>
+        </select>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+        <button type="button" id="registerButton">Register</button>
+        <p id="errorMessage"></p>
+      </div>
+    </main>
+
+    <script src="/js/register.js"></script>
+  </body>
+</html>

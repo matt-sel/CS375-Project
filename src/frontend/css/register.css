@@ -1,0 +1,41 @@
+main {
+    text-align: center;
+    padding-top: 40px;
+}
+
+#registerForm {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    gap: 10px;
+    margin: 0px auto;
+    text-align: left;
+}
+
+#registerForm label {
+    margin-top: 5px;
+}
+
+#registerForm input,
+#registerForm select {
+    padding: 8px;
+    font-size: 16px;
+}
+
+#registerForm button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+}
+
+#loginForm button:hover {
+    background-color: #444;
+}
+
+#errorMessage {
+    margin: 0;
+    color: red;
+}
