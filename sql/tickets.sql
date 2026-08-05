@@ -1,5 +1,6 @@
 CREATE TABLE tickets (
     id SERIAL PRIMARY KEY,
+    company_id INT NOT NULL REFERENCES companies(id),
     user_id INT REFERENCES users(id),
     title VARCHAR(255) NOT NULL,
     description TEXT,
