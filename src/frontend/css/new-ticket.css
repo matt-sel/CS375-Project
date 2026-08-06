@@ -42,3 +42,26 @@ main {
     margin: 0;
     color: red;
 }
+
+#ticketConfirmation {
+    width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+#ticketConfirmation h2 {
+    color: #ffffff;
+}
+.tag-pill {
+    display: inline-block;
+    background-color: #333;
+    color: #e0e0e0;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin: 4px 4px 0 0;
+    font-size: 14px;
+}
+.back-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: #8ab4f8;
+}

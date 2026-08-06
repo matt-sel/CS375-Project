@@ -31,6 +31,14 @@
         <button type="button" id="submitTicketButton">Submit</button>
         <p id="errorMessage"></p>
       </div>
+      <div id="ticketConfirmation" style="display: none;">
+        <h2>Ticket submitted</h2>
+        <p><strong>Title:</strong> <span id="confirmTitle"></span></p>
+        <p><strong>Description:</strong> <span id="confirmDescription"></span></p>
+        <p><strong>Tags:</strong></p>
+        <div id="confirmTags"></div>
+        <a href="/tickets" class="back-link">Back to tickets</a>
+      </div>
     </main>
     <script src="/js/new-ticket.js"></script>
   </body>
