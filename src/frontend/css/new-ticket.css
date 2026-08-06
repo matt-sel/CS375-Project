@@ -1,0 +1,44 @@
+main {
+    text-align: center;
+    padding-top: 40px;
+}
+#ticketForm {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    gap: 10px;
+    margin: 0px auto;
+    text-align: left;
+}
+#ticketForm label {
+    margin-top: 5px;
+}
+#ticketForm .hint {
+    font-weight: normal;
+    font-size: 12px;
+    color: #999;
+}
+#ticketForm input,
+#ticketForm textarea {
+    padding: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+#ticketForm button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+}
+#ticketForm button:hover {
+    background-color: #444;
+}
+#errorMessage {
+    margin: 0;
+    color: red;
+}
