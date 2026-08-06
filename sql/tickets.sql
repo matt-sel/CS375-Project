@@ -5,7 +5,6 @@ CREATE TABLE tickets (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     status VARCHAR(20),
-    tags TEXT[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     closed_at TIMESTAMP
 );
