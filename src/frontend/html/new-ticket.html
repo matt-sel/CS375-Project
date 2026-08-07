@@ -12,8 +12,15 @@
       <nav class="navbar-links">
         <a href="/">Home</a>
         <a href="/tickets">Tickets</a>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+
+        <div id="unauthed-links" class="auth-links">
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        </div>
+
+        <div id="authed-links" class="auth-links hidden">
+          <button id="logout-link">Logout</button>
+        </div>
       </nav>
     </header>
     <main>
@@ -40,6 +47,7 @@
         <a href="/tickets" class="back-link">Back to tickets</a>
       </div>
     </main>
+    <script src="/js/auth.js"></script>
     <script src="/js/new-ticket.js"></script>
   </body>
 </html>

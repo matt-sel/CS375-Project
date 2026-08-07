@@ -13,8 +13,15 @@
       <nav class="navbar-links">
         <a href="/">Home</a>
         <a href="/tickets">Tickets</a>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+
+        <div id="unauthed-links" class="auth-links">
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        </div>
+
+        <div id="authed-links" class="auth-links hidden">
+          <button id="logout-link">Logout</button>
+        </div>
       </nav>
     </header>
 
@@ -29,6 +36,7 @@
         <p id="errorMessage"></p>
       </div>
     </main>
+    <script src="/js/auth.js"></script>
     <script src="/js/login.js"></script>
   </body>
 </html>

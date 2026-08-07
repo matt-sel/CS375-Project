@@ -39,6 +39,37 @@ h1 {
     color: #ffffff;
 }
 
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.auth-links a {
+    color: #e0e0e0;
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    color: #ffffff;
+}
+
+.auth-links button {
+    padding: 0;
+    border: none;
+    background: none;
+    color: #e0e0e0;
+    cursor: pointer;
+}
+
+.auth-links button:hover {
+    color: #ffffff;
+}
+
+.hidden {
+    display: none;
+}
+
 main {
     padding: 8px 30px 30px 30px;
 }
