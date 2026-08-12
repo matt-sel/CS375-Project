@@ -63,6 +63,14 @@ async function getTickets() {
       ticket.appendChild(status);
       ticket.appendChild(timeCreated);
 
+
+      if (tick.closed_at) {
+        const timeClosed = document.createElement("p");
+        timeClosed.className = "ticket-created";
+        timeClosed.textContent = `Closed: ${tick.closed_at}`;
+        ticket.appendChild(timeClosed);
+      }
+
       ticketDiv.appendChild(ticket);
     });
   } catch (err) {
