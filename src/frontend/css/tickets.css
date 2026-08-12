@@ -1,0 +1,60 @@
+#tickets {
+  width: 70%;
+}
+
+.ticket {
+  background-color: #252525;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.ticket:hover {
+  border-color: #444;
+}
+
+.ticket h2 {
+  color: #fff;
+  font-size: 20px;
+}
+
+.ticket-created {
+  color: #888;
+  font-size: 14px;
+}
+
+.ticket-status {
+  margin: 0;
+  display: inline-block; /* hug text as opposed to entire screen */
+  padding: 1px 8px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: capitalize; /* Title case the status to be consistent /*
+}
+
+/* Status coloring */
+.status-open {
+  background-color: #244d2c;
+  color: #9be6a8;
+}
+
+.status-pending {
+  background-color: #4d4220;
+  color: #e6cc75;
+}
+
+.status-closed {
+  background-color: #3a3a3a;
+  color: #bdbdbd;
+}
+
+.status-unknown {
+  background-color: #555;
+  color: #de4a4a;
+}
+
+#tickets-error {
+  color: #e0e0e0;
+}
