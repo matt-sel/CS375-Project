@@ -17,6 +17,7 @@ async function getTickets() {
     }
 
     const tickets = await res.json();
+    refreshTagOptions(tickets);
     ticketDiv.replaceChildren();
     errMessage.textContent = "";
 
@@ -25,7 +26,8 @@ async function getTickets() {
       errMessage.textContent = "No tickets found";
     }
 
-    tickets.forEach(tick => {
+    const filteredTickets = filterTickets(tickets);
+    filteredTickets.forEach(tick => {
       const ticket = document.createElement("div");
       const title = document.createElement("h2");
       const createdBy = document.createElement("p");
@@ -99,5 +101,74 @@ async function getTickets() {
   }
 }
 
+function filterTickets(tickets) {
+  const sort = document.getElementById("sort").value;
+  const status = document.getElementById("status-filter").value;
+  const tag = document.getElementById("tag-filter").value;
+
+  let newTickets = [...tickets];
+
+  if (status !== "all") {
+    newTickets = newTickets.filter(ticket => {
+      return ticket.status === status;
+    });
+  }
+
+  if (tag !== "all") {
+    newTickets = newTickets.filter(ticket => {
+      return ticket.tags.includes(tag);
+    });
+  }
+
+  if (sort === "newest") {
+    newTickets.sort((a,b) => {
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+  }
+
+  if (sort === "oldest") {
+    newTickets.sort((a,b) => {
+      return new Date(a.created_at) - new Date(b.created_at);
+    });
+  }
+
+  return newTickets;
+}
+
+function refreshTagOptions(tickets) {
+  const tagFilter = document.getElementById("tag-filter");
+  const currentFilter = tagFilter.value;
+  tagFilter.replaceChildren();
+
+  const options = document.createElement("option");
+  options.value = "all";
+  options.textContent = "All";
+  tagFilter.appendChild(options);
+
+  const tags = [];
+
+  tickets.forEach(ticket => {
+    ticket.tags.forEach(tag => {
+      if (tag && !tags.includes(tag)) {
+        tags.push(tag);
+      }
+    });
+  });
+  tags.sort();
+
+  tags.forEach(tag => {
+    const option = document.createElement("option");
+    option.value = tag;
+    option.textContent = tag;
+    tagFilter.appendChild(option);
+  });
+
+  tagFilter.value = currentFilter;
+}
+
 getTickets();
 setInterval(getTickets, 5000);
+
+document.getElementById("sort").addEventListener("change", getTickets);
+document.getElementById("status-filter").addEventListener("change", getTickets);
+document.getElementById("tag-filter").addEventListener("change", getTickets);

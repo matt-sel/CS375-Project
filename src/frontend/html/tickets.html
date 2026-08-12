@@ -27,9 +27,41 @@
 
     <main>
       <h1>Tickets</h1>
+      
 
-      <p id="tickets-error"></p>
-      <div id="tickets"></div>
+      <div id="ticket-container">
+        <p id="tickets-error"></p>
+        <div id="tickets"></div>
+
+        <div id="ticket-options">
+          <h3>Filter Tickets</h3>
+
+          <div>
+            <label for="sort">Sort</label>
+            <select id="sort">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="status-filter">Status</label>
+            <select id="status-filter">
+              <option value="all">All</option>
+              <option value="open">Open</option>
+              <option value="pending">Pending</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="tag-filter">Tag</label>
+            <select id="tag-filter">
+              <option value="all">All</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </main>
 
     <script src="/js/auth.js"></script>
