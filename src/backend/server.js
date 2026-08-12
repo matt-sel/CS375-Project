@@ -11,6 +11,7 @@ const hostname = "localhost";
 const pool = require("./database");
 const authRoutes = require("./routes/auth");
 const companyRoutes = require("./routes/companies");
+const ticketRoutes = require("./routes/tickets");
 
 app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(express.json());
@@ -39,8 +40,13 @@ app.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/html/register.html"));
 });
 
+app.get("/tickets", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/html/tickets.html"))
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/companies", companyRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 app.listen(PORT, hostname, () => {
     console.log(`http://${hostname}:${PORT}`);
