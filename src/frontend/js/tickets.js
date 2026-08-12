@@ -33,11 +33,17 @@ async function getTickets() {
       const status = document.createElement("p");
       const timeCreated = document.createElement("p");
 
+      const buttons = document.createElement("div");
+      const commentButton = document.createElement("button");
+      const upVoteButton = document.createElement("button");
+
       ticket.className = "ticket";
       title.className = "ticket-title";
       createdBy.className = "ticket-created-by";
       description.className = "ticket-description";
       timeCreated.className = "ticket-created";
+      commentButton.className = "comment-button";
+      upVoteButton.className = "upvote-button";
       let statusClass = "status-" + tick.status;
       if (tick.status === TICKET_STATUSES.OPEN) {
         statusClass = "status-open";
@@ -56,6 +62,8 @@ async function getTickets() {
       description.textContent = tick.description || "";
       status.textContent = tick.status;
       timeCreated.textContent = `Created: ${tick.created_at}`;
+      commentButton.textContent = "💬 TODO";
+      upVoteButton.textContent = "▲ TODO";
 
       ticket.appendChild(title);
       ticket.appendChild(createdBy);
@@ -79,6 +87,11 @@ async function getTickets() {
         ticket.appendChild(timeClosed);
       }
 
+      buttons.appendChild(commentButton);
+      buttons.appendChild(upVoteButton);
+      buttons.className = "ticket-buttons";
+
+      ticket.append(buttons);
       ticketDiv.appendChild(ticket);
     });
   } catch (err) {

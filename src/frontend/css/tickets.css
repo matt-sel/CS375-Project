@@ -58,3 +58,24 @@
 #tickets-error {
   color: #e0e0e0;
 }
+
+/* Interaction buttons */
+.ticket-buttons {
+  text-align: right;
+}
+
+.comment-button,
+.upvote-button {
+  padding: 4px 6px;
+  margin-right: 6px;
+  background-color: #252525;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.comment-button:hover,
+.upvote-button:hover {
+  background-color: #333;
+}
