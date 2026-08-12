@@ -60,9 +60,17 @@ async function getTickets() {
       ticket.appendChild(title);
       ticket.appendChild(createdBy);
       ticket.appendChild(description);
+
+      /*TODO: Revisit this so that we can nicely color the tags in pill form like the status */
+      if (tick.tags[0]) {
+        const tags = document.createElement("p");
+        tags.className = "ticket-tags";
+        tags.textContent = "Tags: " + tick.tags.join(", ");
+        ticket.append(tags);
+      }
+
       ticket.appendChild(status);
       ticket.appendChild(timeCreated);
-
 
       if (tick.closed_at) {
         const timeClosed = document.createElement("p");
