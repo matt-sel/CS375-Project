@@ -1,12 +1,71 @@
 const submitButton = document.getElementById("submitTicketButton");
 const errorMessage = document.getElementById("errorMessage");
+const tagInput = document.getElementById("tagInput");
+const addTagButton = document.getElementById("addTagButton");
+const selectedTagsDiv = document.getElementById("selectedTags");
 
 const TITLE_MAX_LENGTH = 255;
 const DESCRIPTION_MAX_LENGTH = 2000;
 const MAX_TAGS = 5;
 const TAG_MAX_LENGTH = 30;
 
-function validateTicket(title, description, tags) {
+let tags = [];
+
+function renderTags() {
+  selectedTagsDiv.innerHTML = "";
+  tags.forEach((tag, index) => {
+    const pill = document.createElement("span");
+    pill.className = "tag-pill";
+
+    const label = document.createElement("span");
+    label.textContent = tag;
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.textContent = "×";
+    removeButton.addEventListener("click", () => {
+      tags.splice(index, 1);
+      renderTags();
+    });
+
+    pill.appendChild(label);
+    pill.appendChild(removeButton);
+    selectedTagsDiv.appendChild(pill);
+  });
+}
+
+function addTag() {
+  const value = tagInput.value.trim();
+  if (!value) {
+    return;
+  }
+  if (value.length > TAG_MAX_LENGTH) {
+    errorMessage.textContent = `Tag "${value}" is too long (max ${TAG_MAX_LENGTH} characters).`;
+    return;
+  }
+  if (tags.length >= MAX_TAGS) {
+    errorMessage.textContent = `Please use ${MAX_TAGS} tags or fewer.`;
+    return;
+  }
+  if (tags.includes(value)) {
+    tagInput.value = "";
+    return;
+  }
+  errorMessage.textContent = "";
+  tags.push(value);
+  tagInput.value = "";
+  renderTags();
+}
+
+addTagButton.addEventListener("click", addTag);
+tagInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addTag();
+  }
+});
+
+function validateTicket(title, description) {
   if (!title) {
     return "Please provide a title.";
   }
@@ -16,20 +75,7 @@ function validateTicket(title, description, tags) {
   if (description.length > DESCRIPTION_MAX_LENGTH) {
     return `Description must be ${DESCRIPTION_MAX_LENGTH} characters or fewer.`;
   }
-  if (tags.length > MAX_TAGS) {
-    return `Please use ${MAX_TAGS} tags or fewer.`;
-  }
-  const longTag = tags.find((t) => t.length > TAG_MAX_LENGTH);
-  if (longTag) {
-    return `Tag "${longTag}" is too long (max ${TAG_MAX_LENGTH} characters).`;
-  }
   return null;
-}
-
-function parseTags(tagsRaw) {
-  return tagsRaw
-    ? tagsRaw.split(",").map((t) => t.trim()).filter((t) => t.length > 0)
-    : [];
 }
 
 function showTicketConfirmation(ticket) {
@@ -60,21 +106,18 @@ function showTicketConfirmation(ticket) {
 submitButton.addEventListener("click", () => {
   const title = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
-  const tags = parseTags(document.getElementById("tags").value.trim());
 
-  const validationError = validateTicket(title, description, tags);
+  const validationError = validateTicket(title, description);
   if (validationError) {
     errorMessage.textContent = validationError;
     return;
   }
 
   errorMessage.textContent = "";
-
   const ticketPayload = { title, description, tags };
 
   // TODO: once "Build submit ticket to board logic/endpoint" is done,
-  // POST ticketPayload to /api/tickets, then call:
-  // showTicketConfirmation(ticketPayload);
+  // POST ticketPayload to /api/tickets
   console.log("Ticket ready to submit:", ticketPayload);
   showTicketConfirmation(ticketPayload);
 });

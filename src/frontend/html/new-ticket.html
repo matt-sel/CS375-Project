@@ -32,8 +32,12 @@
         <label for="description">Description</label>
         <textarea id="description" name="description" rows="6"></textarea>
 
-        <label for="tags">Tags <span class="hint">(comma separated)</span></label>
-        <input type="text" id="tags" name="tags" placeholder="customer, high-severity">
+        <label for="tagInput">Tags</label>
+        <div id="tagInputRow">
+          <input type="text" id="tagInput" placeholder="e.g. customer">
+          <button type="button" id="addTagButton">Add</button>
+        </div>
+        <div id="selectedTags"></div>
 
         <button type="button" id="submitTicketButton">Submit</button>
         <p id="errorMessage"></p>

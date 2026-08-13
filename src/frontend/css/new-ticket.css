@@ -65,3 +65,49 @@ main {
     margin-top: 15px;
     color: #8ab4f8;
 }
+
+#tagInputRow {
+    display: flex;
+    gap: 8px;
+}
+#tagInputRow input {
+    flex: 1;
+}
+#tagInputRow button {
+    padding: 8px 14px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+#tagInputRow button:hover {
+    background-color: #444;
+}
+#selectedTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 20px;
+}
+#selectedTags .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #333;
+    color: #e0e0e0;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+#selectedTags .tag-pill button {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+}
+#selectedTags .tag-pill button:hover {
+    color: #fff;
+}
