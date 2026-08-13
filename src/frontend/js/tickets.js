@@ -73,9 +73,14 @@ async function getTickets() {
 
       /*TODO: Revisit this so that we can nicely color the tags in pill form like the status */
       if (tick.tags[0]) {
-        const tags = document.createElement("p");
+        const tags = document.createElement("div");
         tags.className = "ticket-tags";
-        tags.textContent = "Tags: " + tick.tags.join(", ");
+        tick.tags.forEach((tag) => {
+          const pill = document.createElement("span");
+          pill.className = "tag-pill";
+          pill.textContent = tag;
+          tags.appendChild(pill);
+        });
         ticket.append(tags);
       }
 
