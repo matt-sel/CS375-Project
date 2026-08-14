@@ -1,9 +1,3 @@
-const TICKET_STATUSES = {
-  OPEN: "open",
-  PENDING: "pending",
-  CLOSED: "closed"
-}
-
 async function getTickets() {
   const ticketDiv = document.getElementById("tickets");
   const errMessage = document.getElementById("tickets-error");
@@ -46,23 +40,17 @@ async function getTickets() {
       timeCreated.className = "ticket-created";
       commentButton.className = "comment-button";
       upVoteButton.className = "upvote-button";
+
       let statusClass = "status-" + tick.status;
-      if (tick.status === TICKET_STATUSES.OPEN) {
-        statusClass = "status-open";
-      } else if (tick.status === TICKET_STATUSES.PENDING) {
-        statusClass = "status-pending";
-      } else if (tick.status === TICKET_STATUSES.CLOSED) {
-        statusClass = "status-closed";
-      } else {
+      if (!TICKET_STATUS_LABELS[tick.status]) {
         statusClass = "status-unknown";
       }
       status.className = "ticket-status " + statusClass;
 
-
       title.textContent = tick.title;
       createdBy.textContent = `Submitted by: ${tick.username}`;
       description.textContent = tick.description || "";
-      status.textContent = tick.status;
+      status.textContent = TICKET_STATUS_LABELS[tick.status] || tick.status;
       timeCreated.textContent = `Created: ${tick.created_at}`;
       commentButton.textContent = "💬 TODO";
       upVoteButton.textContent = "▲ TODO";
@@ -71,7 +59,6 @@ async function getTickets() {
       ticket.appendChild(createdBy);
       ticket.appendChild(description);
 
-      /*TODO: Revisit this so that we can nicely color the tags in pill form like the status */
       if (tick.tags[0]) {
         const tags = document.createElement("div");
         tags.className = "ticket-tags";
