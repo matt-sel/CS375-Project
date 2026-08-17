@@ -12,6 +12,7 @@ const pool = require("./database");
 const authRoutes = require("./routes/auth");
 const companyRoutes = require("./routes/companies");
 const ticketRoutes = require("./routes/tickets");
+const voteRoutes = require("./routes/votes");
 
 app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(express.json());
@@ -47,6 +48,7 @@ app.get("/tickets", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/tickets", ticketRoutes);
+app.use("/api/votes", voteRoutes);
 
 app.listen(PORT, hostname, () => {
     console.log(`http://${hostname}:${PORT}`);

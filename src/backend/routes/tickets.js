@@ -11,12 +11,14 @@ router.get("/", async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT tickets.*, users.username,
-            ARRAY_AGG(tags.name) AS tags
+            ARRAY_AGG(tags.name) AS tags,
+            COUNT(DISTINCT votes.user_id) AS vote_count
             FROM tickets
 
             JOIN users ON tickets.user_id = users.id
             LEFT JOIN ticket_tags ON tickets.id = ticket_tags.ticket_id
             LEFT JOIN tags ON ticket_tags.tag_id = tags.id
+            LEFT JOIN votes on tickets.id = votes.ticket_id
 
             WHERE tickets.company_id = $1 
             GROUP BY tickets.id, users.username

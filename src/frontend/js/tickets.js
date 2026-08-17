@@ -53,7 +53,21 @@ async function getTickets() {
       status.textContent = TICKET_STATUS_LABELS[tick.status] || tick.status;
       timeCreated.textContent = `Created: ${tick.created_at}`;
       commentButton.textContent = "💬 TODO";
-      upVoteButton.textContent = "▲ TODO";
+      upVoteButton.textContent = `▲ ${tick.vote_count}`;
+
+      upVoteButton.addEventListener("click", async () => {
+        const res = await fetch(`/api/votes/${tick.id}`, {
+          method: "POST"
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          // Shows up in the browser the error in a modal popup
+          alert(data.error);
+          return;
+        }
+        getTickets();
+      });
 
       ticket.appendChild(title);
       ticket.appendChild(createdBy);
