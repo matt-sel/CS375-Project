@@ -85,6 +85,24 @@ async function getTickets() {
       buttons.appendChild(upVoteButton);
       buttons.className = "ticket-buttons";
 
+      const statusSelect = document.createElement("select");
+      statusSelect.className = "status-select";
+      Object.entries(TICKET_STATUS_LABELS).forEach(([value, label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        if (value === tick.status) {
+          option.selected = true;
+        }
+        statusSelect.appendChild(option);
+      });
+      statusSelect.addEventListener("change", () => {
+        // TODO: once "Build API to update ticket status" is done,
+        // PATCH /api/tickets/:id with { status: statusSelect.value }
+        console.log(`Ticket ${tick.id} status change requested:`, statusSelect.value);
+      });
+      buttons.appendChild(statusSelect);
+
       ticket.append(buttons);
       ticketDiv.appendChild(ticket);
     });
