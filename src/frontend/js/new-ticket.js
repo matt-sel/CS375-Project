@@ -103,7 +103,7 @@ function showTicketConfirmation(ticket) {
   confirmation.style.display = "block";
 }
 
-submitButton.addEventListener("click", () => {
+submitButton.addEventListener("click", async () => {
   const title = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
 
@@ -116,8 +116,23 @@ submitButton.addEventListener("click", () => {
   errorMessage.textContent = "";
   const ticketPayload = { title, description, tags };
 
-  // TODO: once "Build submit ticket to board logic/endpoint" is done,
-  // POST ticketPayload to /api/tickets
-  console.log("Ticket ready to submit:", ticketPayload);
-  showTicketConfirmation(ticketPayload);
+  try {
+    const res = await fetch("/api/tickets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(ticketPayload)
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      errorMessage.textContent = data.error;
+      return;
+    }
+
+    showTicketConfirmation(ticketPayload);
+  } catch (err) {
+    errorMessage.textContent = "Unable to submit ticket";
+  }
 });
