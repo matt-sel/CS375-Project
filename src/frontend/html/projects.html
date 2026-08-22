@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Projects</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/projects.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+  </head>
+
+  <body>
+    <header class="navbar">
+      <a href="/" class="navbar-name">Public Tickets</a>
+      <nav class="navbar-links">
+        <a href="/">Home</a>
+        <a href="/tickets">Tickets</a>
+        <a href="/projects">Projects</a>
+
+        <div id="unauthed-links" class="auth-links">
+          <a href="/login">Login</a>
+          <a href="/register">Register</a>
+        </div>
+
+        <div id="authed-links" class="auth-links hidden">
+          <button id="logout-link">Logout</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Projects</h1>
+      <p id="project-message"></p>
+
+      <section class="project-section">
+        <h2>Create a Project</h2>
+        <label for="project-name">Project name</label>
+        <input type="text" id="project-name" required>
+        <button type="button" id="create-project-button">Create Project</button>
+      </section>
+
+      <section class="project-section">
+        <h2>Add a User</h2>
+        <label for="project-select">Project</label>
+        <select id="project-select">
+          <option value="">Select a project</option>
+        </select>
+
+        <label for="member-username">Username</label>
+        <input type="text" id="member-username" required>
+        <button type="button" id="add-member-button">Add User</button>
+      </section>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/projects.js"></script>
+  </body>
+</html>

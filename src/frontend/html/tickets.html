@@ -13,6 +13,7 @@
       <nav class="navbar-links">
         <a href="/">Home</a>
         <a href="/tickets">Tickets</a>
+        <a href="/projects">Projects</a>
 
         <div id="unauthed-links" class="auth-links">
           <a href="/login">Login</a>
@@ -27,7 +28,6 @@
 
     <main>
       <h1>Tickets</h1>
-      
 
       <div id="ticket-container">
         <p id="tickets-error"></p>
@@ -35,6 +35,13 @@
 
         <div id="ticket-options">
           <h3>Filter Tickets</h3>
+
+          <div>
+            <label for="project-select">Project</label>
+            <select id="project-select">
+              <option value="">Select a project</option>
+            </select>
+          </div>
 
           <div>
             <label for="sort">Sort</label>

@@ -8,6 +8,13 @@ router.get("/", async (req, res) => {
         return;
     }
 
+    const projectId = req.query.projectId;
+    if (!projectId) {
+        return res.status(400).json({
+            error: "Project ID is required"
+        });
+    }
+
     try {
         const result = await pool.query(
             `SELECT tickets.*, users.username,
@@ -15,15 +22,17 @@ router.get("/", async (req, res) => {
             COUNT(DISTINCT votes.user_id) AS vote_count
             FROM tickets
 
+            JOIN project_members ON tickets.project_id = project_members.project_id
+                AND project_members.user_id = $2
             JOIN users ON tickets.user_id = users.id
             LEFT JOIN ticket_tags ON tickets.id = ticket_tags.ticket_id
             LEFT JOIN tags ON ticket_tags.tag_id = tags.id
             LEFT JOIN votes on tickets.id = votes.ticket_id
 
-            WHERE tickets.company_id = $1 
+            WHERE tickets.project_id = $1
             GROUP BY tickets.id, users.username
             ORDER BY tickets.created_at DESC`,
-            [req.session.companyId]
+            [projectId, req.session.userId]
         );
         return res.json(result.rows);
     } catch (err) {
@@ -48,11 +57,8 @@ router.post("/", async (req, res) => {
   const description = req.body.description ? req.body.description.trim() : "";
   const tags = Array.isArray(req.body.tags) ? req.body.tags : [];
 
-  const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-
-    const ticketResult = await client.query(
+    const ticketResult = await pool.query(
       `INSERT INTO tickets (company_id, user_id, title, description, status)
        VALUES ($1, $2, $3, $4, 'open')
        RETURNING id`,
@@ -66,7 +72,7 @@ router.post("/", async (req, res) => {
         continue;
       }
 
-      let tagResult = await client.query(
+      let tagResult = await pool.query(
         "SELECT id FROM tags WHERE name = $1",
         [trimmed]
       );
@@ -74,7 +80,7 @@ router.post("/", async (req, res) => {
       let tagId;
       if (tagResult.rows.length === 0) {
         // New user-created tag, no category chosen in the UI yet -- see note above
-        const inserted = await client.query(
+        const inserted = await pool.query(
           "INSERT INTO tags (name, category) VALUES ($1, $2) RETURNING id",
           [trimmed, "general"]
         );
@@ -83,24 +89,20 @@ router.post("/", async (req, res) => {
         tagId = tagResult.rows[0].id;
       }
 
-      await client.query(
+      await pool.query(
         "INSERT INTO ticket_tags (ticket_id, tag_id) VALUES ($1, $2)",
         [ticketId, tagId]
       );
     }
 
-    await client.query("COMMIT");
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Ticket created",
       ticket_id: ticketId
     });
   } catch (err) {
-    await client.query("ROLLBACK");
     return res.status(500).json({
       error: "Server error"
     });
-  } finally {
-    client.release();
   }
 });
 

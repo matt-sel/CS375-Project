@@ -1,0 +1,50 @@
+main {
+    max-width: 600px;
+}
+
+.project-section {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #252525;
+    border: 1px solid #333;
+    border-radius: 6px;
+}
+
+.project-section h2 {
+    margin-top: 0;
+    color: #ffffff;
+}
+
+.project-section label {
+    display: block;
+    margin: 12px 0 5px;
+}
+
+.project-section input,
+.project-section select {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    border-radius: 4px;
+}
+
+.project-section button {
+    margin-top: 14px;
+    padding: 8px 12px;
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.project-section button:hover {
+    background-color: #444;
+}
+
+#project-message {
+    color: #e0e0e0;
+}

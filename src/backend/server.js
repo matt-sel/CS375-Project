@@ -8,9 +8,8 @@ const app = express();
 const PORT = 3000;
 const hostname = "localhost";
 
-const pool = require("./database");
 const authRoutes = require("./routes/auth");
-const companyRoutes = require("./routes/companies");
+const projectRoutes = require("./routes/projects");
 const ticketRoutes = require("./routes/tickets");
 const voteRoutes = require("./routes/votes");
 
@@ -45,8 +44,12 @@ app.get("/tickets", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/html/tickets.html"))
 });
 
+app.get("/projects", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/html/projects.html"))
+});
+
 app.use("/api/auth", authRoutes);
-app.use("/api/companies", companyRoutes);
+app.use("/api/projects", projectRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/votes", voteRoutes);
 

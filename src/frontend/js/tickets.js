@@ -1,8 +1,49 @@
+async function getProjects() {
+  const projectSelect = document.getElementById("project-select");
+
+  try {
+    const res = await fetch("/api/projects");
+    if (!res.ok) {
+      return;
+    }
+
+    const projects = await res.json();
+    const currentValue = projectSelect.value;
+    projectSelect.replaceChildren();
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select a project";
+    projectSelect.appendChild(defaultOption);
+
+    projects.forEach((project) => {
+      const option = document.createElement("option");
+      option.value = project.id;
+      option.textContent = project.name;
+      projectSelect.appendChild(option);
+    });
+
+    if (currentValue) {
+      projectSelect.value = currentValue;
+    }
+  } catch (err) {
+    console.error("Unable to get projects", err);
+  }
+}
+
 async function getTickets() {
   const ticketDiv = document.getElementById("tickets");
   const errMessage = document.getElementById("tickets-error");
+  const projectId = document.getElementById("project-select").value;
+
+  if (!projectId) {
+    ticketDiv.replaceChildren();
+    errMessage.textContent = "Select a project to view tickets.";
+    return;
+  }
+
   try {
-    const res = await fetch("/api/tickets");
+    const res = await fetch(`/api/tickets?projectId=${projectId}`);
 
     if (!res.ok) {
       const data = await res.json();
@@ -190,9 +231,11 @@ function refreshTagOptions(tickets) {
   tagFilter.value = currentFilter;
 }
 
+getProjects();
 getTickets();
 setInterval(getTickets, 5000);
 
 document.getElementById("sort").addEventListener("change", getTickets);
 document.getElementById("status-filter").addEventListener("change", getTickets);
 document.getElementById("tag-filter").addEventListener("change", getTickets);
+document.getElementById("project-select").addEventListener("change", getTickets);

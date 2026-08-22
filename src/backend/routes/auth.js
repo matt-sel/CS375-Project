@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const pool = require("../database");
 const router = express.Router();
 
-/* Login route, sets session auth with userId and companyId */
+/* Login route, sets session auth with userId */
 router.post("/login", async (req, res) => {
   if (!req.body.hasOwnProperty("email")) {
     return res.status(400).json({
@@ -22,10 +22,10 @@ router.post("/login", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT id, company_id, password_hash FROM users WHERE email = $1", 
+      "SELECT id, password_hash FROM users WHERE email = $1",
       [email]
     );
-    
+
     if (result.rows.length === 0) {
       return res.status(401).json({
         error: "Invalid email or password"
@@ -42,7 +42,6 @@ router.post("/login", async (req, res) => {
     }
 
     req.session.userId = user.id;
-    req.session.companyId = user.company_id;
 
     return res.json({
       message: "Login sucessful",
@@ -52,7 +51,7 @@ router.post("/login", async (req, res) => {
       error: "Server error"
     })
   }
-}); 
+});
 
 /* Register route, creates a new user in the db */
 router.post("/register", async (req, res) => {
@@ -74,24 +73,17 @@ router.post("/register", async (req, res) => {
     });
   }
 
-  if (!req.body.hasOwnProperty("company")) {
-    return res.status(400).json({
-      error: "Please provide a company"
-    });
-  }
-
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-  const company = req.body.company;
 
   try {
     const hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      `INSERT INTO users (company_id, username, email, password_hash)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, company_id, username, email`,
-      [company, username, email, hash]
+      `INSERT INTO users (username, email, password_hash)
+       VALUES ($1, $2, $3)
+       RETURNING id, username, email`,
+      [username, email, hash]
     );
 
     const user = result.rows[0];
@@ -99,18 +91,11 @@ router.post("/register", async (req, res) => {
     return res.status(200).json({
       message: "Successfully registered user",
       user_id: user.id,
-      company_id: user.company_id,
     });
   } catch (err) {
     if (err.code === "23505") {
       return res.status(400).json({
         error: "Username or email already exists"
-      });
-    }
-
-    if (err.code === "23503") {
-      return res.status(400).json({
-        error: "Company does not exist"
       });
     }
 
@@ -130,12 +115,12 @@ router.get("/user", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT id, company_id, username, email FROM users WHERE id = $1",
+      "SELECT id, username, email FROM users WHERE id = $1",
       [req.session.userId]
     );
 
     if (result.rows.length === 0) {
-      req.session.destroy(); // Ends session, removes the session property from the req
+      req.session.destroy(); // Ends session, removes the session property from the request
       return res.status(401).json({
         user: null
       });
