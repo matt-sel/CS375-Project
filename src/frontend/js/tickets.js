@@ -1,3 +1,92 @@
+let projectMembers = [];
+
+async function loadProjectMembers(projectId) {
+  if (!projectId) {
+    projectMembers = [];
+    return;
+  }
+  try {
+    const res = await fetch(`/api/projects/${projectId}/members`);
+    if (!res.ok) {
+      projectMembers = [];
+      return;
+    }
+    projectMembers = await res.json();
+  } catch (err) {
+    projectMembers = [];
+  }
+}
+
+async function loadComments(ticketId, panel) {
+  panel.innerHTML = "Loading comments...";
+  try {
+    const res = await fetch(`/api/tickets/${ticketId}/comments`);
+    const comments = await res.json();
+    if (!res.ok) {
+      panel.textContent = comments.error;
+      return;
+    }
+
+    panel.innerHTML = "";
+    const list = document.createElement("div");
+    list.className = "comment-list";
+
+    if (comments.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "comment-empty";
+      empty.textContent = "No comments yet.";
+      list.appendChild(empty);
+    }
+
+    comments.forEach((c) => {
+      const item = document.createElement("div");
+      item.className = "comment-item";
+      const author = document.createElement("strong");
+      author.textContent = c.username;
+      const body = document.createElement("p");
+      body.textContent = c.comment;
+      item.appendChild(author);
+      item.appendChild(body);
+      list.appendChild(item);
+    });
+    panel.appendChild(list);
+
+    const form = document.createElement("div");
+    form.className = "comment-form";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Add a comment...";
+    const submit = document.createElement("button");
+    submit.type = "button";
+    submit.textContent = "Post";
+
+    submit.addEventListener("click", async () => {
+      const value = input.value.trim();
+      if (!value) {
+        return;
+      }
+      const res = await fetch(`/api/tickets/${ticketId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comment: value })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error);
+        return;
+      }
+      input.value = "";
+      await loadComments(ticketId, panel);
+    });
+
+    form.appendChild(input);
+    form.appendChild(submit);
+    panel.appendChild(form);
+  } catch (err) {
+    panel.textContent = "Unable to load comments";
+  }
+}
+
 async function getProjects() {
   const projectSelect = document.getElementById("project-select");
 
@@ -41,6 +130,8 @@ async function getTickets() {
     errMessage.textContent = "Select a project to view tickets.";
     return;
   }
+
+  await loadProjectMembers(projectId);
 
   try {
     const res = await fetch(`/api/tickets?projectId=${projectId}`);
@@ -93,8 +184,18 @@ async function getTickets() {
       description.textContent = tick.description || "";
       status.textContent = TICKET_STATUS_LABELS[tick.status] || tick.status;
       timeCreated.textContent = `Created: ${tick.created_at}`;
-      commentButton.textContent = "💬 TODO";
+      commentButton.textContent = "💬 Comments";
       upVoteButton.textContent = `▲ ${tick.vote_count}`;
+
+      const commentsPanel = document.createElement("div");
+      commentsPanel.className = "comments-panel hidden";
+
+      commentButton.addEventListener("click", async () => {
+        commentsPanel.classList.toggle("hidden");
+        if (!commentsPanel.classList.contains("hidden")) {
+          await loadComments(tick.id, commentsPanel);
+        }
+      });
 
       upVoteButton.addEventListener("click", async () => {
         const res = await fetch(`/api/votes/${tick.id}`, {
@@ -158,7 +259,41 @@ async function getTickets() {
       });
       buttons.appendChild(statusSelect);
 
+      const assignSelect = document.createElement("select");
+      assignSelect.className = "assign-select";
+
+      const unassignedOption = document.createElement("option");
+      unassignedOption.value = "";
+      unassignedOption.textContent = "Unassigned";
+      assignSelect.appendChild(unassignedOption);
+
+      projectMembers.forEach((member) => {
+        const option = document.createElement("option");
+        option.value = member.id;
+        option.textContent = member.username;
+        if (tick.assigned_to === member.id) {
+          option.selected = true;
+        }
+        assignSelect.appendChild(option);
+      });
+
+      assignSelect.addEventListener("change", async () => {
+        const res = await fetch(`/api/tickets/${tick.id}/assign`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ assignedTo: assignSelect.value || null })
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          alert(data.error);
+          return;
+        }
+        getTickets();
+      });
+      buttons.appendChild(assignSelect);
+
       ticket.append(buttons);
+      ticket.appendChild(commentsPanel);
       ticketDiv.appendChild(ticket);
     });
   } catch (err) {

@@ -131,4 +131,43 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/:ticketId/comments", async (req, res) => {
+  if (!isLoggedIn(req, res)) {
+    return;
+  }
+  try {
+    const result = await pool.query(
+      `SELECT comments.id, comments.comment, comments.created_at, users.username
+       FROM comments
+       JOIN users ON comments.user_id = users.id
+       WHERE comments.ticket_id = $1
+       ORDER BY comments.created_at ASC`,
+      [req.params.ticketId]
+    );
+    return res.json(result.rows);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post("/:ticketId/comments", async (req, res) => {
+  if (!isLoggedIn(req, res)) {
+    return;
+  }
+  if (!req.body.comment || !req.body.comment.trim()) {
+    return res.status(400).json({ error: "Please provide a comment" });
+  }
+  try {
+    const result = await pool.query(
+      `INSERT INTO comments (ticket_id, user_id, comment)
+       VALUES ($1, $2, $3)
+       RETURNING id, comment, created_at`,
+      [req.params.ticketId, req.session.userId, req.body.comment.trim()]
+    );
+    return res.status(201).json(result.rows[0]);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
