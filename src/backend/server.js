@@ -5,6 +5,7 @@ const session = require("express-session");
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+const secret = process.env.SESSION_SECRET ? process.env.SESSION_SECRET : require("../env.json").session_secret;
 
 const authRoutes = require("./routes/auth");
 const projectRoutes = require("./routes/projects");
@@ -16,12 +17,11 @@ app.use(express.json());
 
 // Docs: https://expressjs.com/en/resources/middleware/session/
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV == "production",
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }))
