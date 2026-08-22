@@ -53,16 +53,41 @@ router.post("/", async (req, res) => {
     });
   }
 
+  if (!req.body.projectId) {
+    return res.status(400).json({
+      error: "Please select a project"
+    });
+  }
+
+  let project;
+  try {
+    project = await pool.query(
+      `SELECT 1 FROM project_members
+       WHERE project_id = $1 AND user_id = $2`,
+      [req.body.projectId, req.session.userId]
+    );
+  } catch (err) {
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+
+  if (project.rows.length === 0) {
+    return res.status(403).json({
+      error: "You are not a member of this project"
+    });
+  }
+
   const title = req.body.title.trim();
   const description = req.body.description ? req.body.description.trim() : "";
   const tags = Array.isArray(req.body.tags) ? req.body.tags : [];
 
   try {
     const ticketResult = await pool.query(
-      `INSERT INTO tickets (company_id, user_id, title, description, status)
+      `INSERT INTO tickets (project_id, user_id, title, description, status)
        VALUES ($1, $2, $3, $4, 'open')
        RETURNING id`,
-      [req.session.companyId, req.session.userId, title, description]
+      [req.body.projectId, req.session.userId, title, description]
     );
     const ticketId = ticketResult.rows[0].id;
 

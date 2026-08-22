@@ -44,6 +44,10 @@ app.get("/tickets", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/html/tickets.html"))
 });
 
+app.get("/new-ticket", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/html/new-ticket.html"));
+});
+
 app.get("/projects", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/html/projects.html"))
 });

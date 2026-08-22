@@ -3,6 +3,7 @@ const errorMessage = document.getElementById("errorMessage");
 const tagInput = document.getElementById("tagInput");
 const addTagButton = document.getElementById("addTagButton");
 const selectedTagsDiv = document.getElementById("selectedTags");
+const projectSelect = document.getElementById("project-select");
 
 const TITLE_MAX_LENGTH = 255;
 const DESCRIPTION_MAX_LENGTH = 2000;
@@ -10,6 +11,26 @@ const MAX_TAGS = 5;
 const TAG_MAX_LENGTH = 30;
 
 let tags = [];
+
+async function getProjects() {
+  try {
+    const res = await fetch("/api/projects");
+    if (!res.ok) {
+      errorMessage.textContent = "Unable to load projects";
+      return;
+    }
+
+    const projects = await res.json();
+    projects.forEach((project) => {
+      const option = document.createElement("option");
+      option.value = project.id;
+      option.textContent = project.name;
+      projectSelect.appendChild(option);
+    });
+  } catch (err) {
+    errorMessage.textContent = "Unable to load projects";
+  }
+}
 
 function renderTags() {
   selectedTagsDiv.innerHTML = "";
@@ -105,7 +126,13 @@ function showTicketConfirmation(ticket) {
 
 submitButton.addEventListener("click", async () => {
   const title = document.getElementById("title").value.trim();
+  const projectId = projectSelect.value;
   const description = document.getElementById("description").value.trim();
+
+  if (!projectId) {
+    errorMessage.textContent = "Please select a project.";
+    return;
+  }
 
   const validationError = validateTicket(title, description);
   if (validationError) {
@@ -114,7 +141,7 @@ submitButton.addEventListener("click", async () => {
   }
 
   errorMessage.textContent = "";
-  const ticketPayload = { title, description, tags };
+  const ticketPayload = { projectId, title, description, tags };
 
   try {
     const res = await fetch("/api/tickets", {
@@ -136,3 +163,5 @@ submitButton.addEventListener("click", async () => {
     errorMessage.textContent = "Unable to submit ticket";
   }
 });
+
+getProjects();
