@@ -5,8 +5,7 @@ const session = require("express-session");
 
 const app = express();
 
-const PORT = 3000;
-const hostname = "localhost";
+const PORT = process.env.PORT || 3000;
 
 const authRoutes = require("./routes/auth");
 const projectRoutes = require("./routes/projects");
@@ -23,7 +22,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV == "production",
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }))
@@ -57,6 +56,6 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/votes", voteRoutes);
 
-app.listen(PORT, hostname, () => {
-    console.log(`http://${hostname}:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port: ${PORT}`)
 });
