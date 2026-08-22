@@ -2,7 +2,7 @@
 
 ## Description
 
-Develop a Jira like ticket managing platform that allows you to create, comment, upvote, and tag tickets. There is also an administrative page that shows telemetry about your tickets/company.
+Develop a Jira like ticket managing platform that allows you to create, comment, upvote, and tag tickets. There is also an administrative page that shows telemetry about your tickets and projects.
 
 ## Getting Started
 
