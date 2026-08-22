@@ -1,6 +1,5 @@
 const path = require("path");
 const express = require("express");
-const env = require("../env.json")
 const session = require("express-session");
 
 const app = express();
@@ -17,7 +16,7 @@ app.use(express.json());
 
 // Docs: https://expressjs.com/en/resources/middleware/session/
 app.use(session({
-    secret: env.session_secret,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
