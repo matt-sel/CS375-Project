@@ -3,6 +3,10 @@ const bcrypt = require("bcrypt");
 const pool = require("../database");
 const router = express.Router();
 
+function isBasicEmail(email) {
+  return typeof email === "string" && email.includes("@") && email.endsWith(".com");
+}
+
 /* Login route, sets session auth with userId */
 router.post("/login", async (req, res) => {
   if (!req.body.hasOwnProperty("email")) {
@@ -19,6 +23,12 @@ router.post("/login", async (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
+
+  if (!isBasicEmail(email)) {
+    return res.status(400).json({
+      error: "Please provide a valid .com email address"
+    });
+  }
 
   try {
     const result = await pool.query(
@@ -76,6 +86,12 @@ router.post("/register", async (req, res) => {
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
+
+  if (!isBasicEmail(email)) {
+    return res.status(400).json({
+      error: "Please provide a valid .com email address"
+    });
+  }
 
   try {
     const hash = await bcrypt.hash(password, 10);
