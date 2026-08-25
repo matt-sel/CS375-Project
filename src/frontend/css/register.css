@@ -27,12 +27,13 @@ main {
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #333;
-    color: #fff;
+    background-color: #e6cc75;
+    color: #1e1e1e;
+    border: 1px solid #e6cc75;
 }
 
-#loginForm button:hover {
-    background-color: #444;
+#registerForm button:hover {
+    background-color: #f0db8a;
 }
 
 #errorMessage {

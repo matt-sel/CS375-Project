@@ -34,11 +34,12 @@ main {
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #333;
-    color: #fff;
+    background-color: #e6cc75;
+    color: #1e1e1e;
+    border: 1px solid #e6cc75;
 }
 #ticketForm button:hover {
-    background-color: #444;
+    background-color: #f0db8a;
 }
 #errorMessage {
     margin: 0;
@@ -76,14 +77,17 @@ main {
     flex: 1;
 }
 #tagInputRow button {
+    box-sizing: border-box;
+    height: 36px;
     padding: 8px 14px;
-    background-color: #333;
-    color: #fff;
-    border: none;
+    background-color: #e6cc75;
+    color: #1e1e1e;
+    border: 1px solid #e6cc75;
+    border-radius: 4px;
     cursor: pointer;
 }
 #tagInputRow button:hover {
-    background-color: #444;
+    background-color: #f0db8a;
 }
 #selectedTags {
     display: flex;

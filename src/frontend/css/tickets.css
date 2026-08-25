@@ -18,12 +18,36 @@
   color: #fff;
 }
 
+.tickets-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#refresh-tickets {
+  padding: 8px 14px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background-color: #e6cc75;
+  color: #1e1e1e;
+  cursor: pointer;
+}
+
+#refresh-tickets:hover {
+  background-color: #f0db8a;
+  border-color: #f0db8a;
+}
+
 #ticket-container {
   display: flex;
 }
 
-#tickets {
+#tickets-area {
   width: 75%;
+}
+
+#tickets {
+  width: 100%;
 }
 
 .ticket {
@@ -94,14 +118,14 @@
   margin-right: 6px;
   background-color: #252525;
   color: #e0e0e0;
-  border: 1px solid #444;
+  border: 1px solid #e6cc75;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .comment-button:hover,
 .upvote-button:hover {
-  background-color: #333;
+  background-color: #4d4220;
 }
 
 /* Sort/Filtering Styles */
@@ -218,9 +242,9 @@
 }
 .comment-form button {
   padding: 6px 12px;
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
+  background-color: #e6cc75;
+  color: #1e1e1e;
+  border: 1px solid #e6cc75;
   border-radius: 4px;
   cursor: pointer;
 }

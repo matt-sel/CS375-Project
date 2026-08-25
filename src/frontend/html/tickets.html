@@ -29,12 +29,17 @@
     <main>
       <div class="tickets-header">
         <h1>Tickets</h1>
-        <a href="/new-ticket">Submit a Ticket</a>
+        <div class="tickets-header-actions">
+          <button id="refresh-tickets" type="button">Refresh Tickets</button>
+          <a href="/new-ticket">Submit a Ticket</a>
+        </div>
       </div>
 
       <div id="ticket-container">
-        <p id="tickets-error"></p>
-        <div id="tickets"></div>
+        <div id="tickets-area">
+          <p id="tickets-error"></p>
+          <div id="tickets"></div>
+        </div>
 
         <div id="ticket-options">
           <h3>Filter Tickets</h3>

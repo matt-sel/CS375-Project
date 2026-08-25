@@ -36,7 +36,7 @@ h1 {
 }
 
 .navbar-links a:hover {
-    color: #ffffff;
+    color: #e6cc75;
 }
 
 .auth-links {
@@ -51,7 +51,7 @@ h1 {
 }
 
 .auth-links a:hover {
-    color: #ffffff;
+    color: #e6cc75;
 }
 
 .auth-links button {
@@ -63,7 +63,7 @@ h1 {
 }
 
 .auth-links button:hover {
-    color: #ffffff;
+    color: #e6cc75;
 }
 
 .hidden {

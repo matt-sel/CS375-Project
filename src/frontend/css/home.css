@@ -1,0 +1,53 @@
+.home-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 30px 56px;
+}
+
+.home-main h1 {
+  color: #fff;
+  font-size: 52px;
+  margin: 0;
+}
+
+.home-main p {
+  color: #c0c0c0;
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 24px 0 30px;
+}
+
+.home-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.home-links a {
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.tickets-link {
+  background: #e6cc75;
+  color: #1e1e1e;
+  padding: 10px 14px;
+  border: 1px solid #e6cc75;
+  border-radius: 4px;
+}
+
+.tickets-link:hover {
+  background: #f0db8a;
+  border-color: #f0db8a;
+}
+
+.account-link {
+  color: #e0e0e0;
+  padding: 8px 0;
+}
+
+.account-link:hover {
+  color: #e6cc75;
+}

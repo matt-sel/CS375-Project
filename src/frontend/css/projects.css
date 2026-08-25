@@ -34,15 +34,15 @@ main {
 .project-section button {
     margin-top: 14px;
     padding: 8px 12px;
-    background-color: #333;
-    color: #e0e0e0;
-    border: 1px solid #555;
+    background-color: #e6cc75;
+    color: #1e1e1e;
+    border: 1px solid #e6cc75;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .project-section button:hover {
-    background-color: #444;
+    background-color: #f0db8a;
 }
 
 #project-message {
