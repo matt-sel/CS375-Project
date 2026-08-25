@@ -93,6 +93,11 @@ async function getProjects() {
   try {
     const res = await fetch("/api/projects");
     if (!res.ok) {
+      if (res.status === 401) {
+        // Differentiate from no tickets
+        document.getElementById("tickets-error").textContent =
+          "Please log in to view tickets.";
+      }
       return;
     }
 
@@ -368,9 +373,9 @@ function refreshTagOptions(tickets) {
 
 getProjects();
 getTickets();
-setInterval(getTickets, 5000);
 
 document.getElementById("sort").addEventListener("change", getTickets);
 document.getElementById("status-filter").addEventListener("change", getTickets);
 document.getElementById("tag-filter").addEventListener("change", getTickets);
 document.getElementById("project-select").addEventListener("change", getTickets);
+document.getElementById("refresh-tickets").addEventListener("click", getTickets);

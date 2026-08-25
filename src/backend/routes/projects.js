@@ -73,6 +73,32 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/:projectId/members", async (req, res) => {
+  if (!isLoggedIn(req, res)) {
+    return;
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT users.id, users.username
+       FROM project_members
+       JOIN users ON users.id = project_members.user_id
+       JOIN project_members AS current_member
+         ON current_member.project_id = project_members.project_id
+       WHERE project_members.project_id = $1
+         AND current_member.user_id = $2
+       ORDER BY users.username ASC`,
+      [req.params.projectId, req.session.userId]
+    );
+
+    return res.json(result.rows);
+  } catch (err) {
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
 router.post("/:projectId/members", async (req, res) => {
   if (!isLoggedIn(req, res)) {
     return;
