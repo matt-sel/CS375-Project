@@ -18,14 +18,21 @@ async function navbarInit() {
     const unauthedLinks = document.getElementById("unauthed-links");
     const authedLinks = document.getElementById("authed-links");
     const logoutLink = document.getElementById("logout-link");
+    const accountLink = document.getElementById("account-link");
 
     // Flip whats visible based on if they are logged in
     if (user) {
         unauthedLinks.classList.add("hidden");
         authedLinks.classList.remove("hidden");
+        if (accountLink) {
+            accountLink.classList.add("hidden");
+        }
     } else {
         unauthedLinks.classList.remove("hidden");
         authedLinks.classList.add("hidden");
+        if (accountLink) {
+            accountLink.classList.remove("hidden");
+        }
     }
 
     logoutLink.addEventListener("click", async (e) => {
