@@ -287,4 +287,45 @@ router.post("/:ticketId/comments", async (req, res) => {
   }
 });
 
+const VALID_STATUSES = ["open", "in_progress", "resolved", "closed"];
+
+router.patch("/:ticketId/status", async (req, res) => {
+  if (!isLoggedIn(req, res)) {
+    return;
+  }
+
+  const status = req.body.status;
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: "Invalid status" });
+  }
+
+  try {
+    const ticket = await pool.query(
+      "SELECT project_id FROM tickets WHERE id = $1",
+      [req.params.ticketId]
+    );
+    if (ticket.rows.length === 0) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+
+    const membership = await pool.query(
+      "SELECT 1 FROM project_members WHERE project_id = $1 AND user_id = $2",
+      [ticket.rows[0].project_id, req.session.userId]
+    );
+    if (membership.rows.length === 0) {
+      return res.status(403).json({ error: "You are not a member of this project" });
+    }
+
+    const closedAt = status === "closed" ? "CURRENT_TIMESTAMP" : "NULL";
+    await pool.query(
+      `UPDATE tickets SET status = $1, closed_at = ${closedAt} WHERE id = $2`,
+      [status, req.params.ticketId]
+    );
+
+    return res.json({ message: "Status updated" });
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;

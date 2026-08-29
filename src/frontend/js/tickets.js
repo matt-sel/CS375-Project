@@ -350,10 +350,18 @@ async function getTickets() {
         }
         statusSelect.appendChild(option);
       });
-      statusSelect.addEventListener("change", () => {
-        // TODO: once "Build API to update ticket status" is done,
-        // PATCH /api/tickets/:id with { status: statusSelect.value }
-        console.log(`Ticket ${tick.id} status change requested:`, statusSelect.value);
+      statusSelect.addEventListener("change", async () => {
+        const res = await fetch(`/api/tickets/${tick.id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: statusSelect.value })
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          alert(data.error);
+          return;
+        }
+        getTickets();
       });
       buttons.appendChild(statusSelect);
 
