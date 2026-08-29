@@ -30,24 +30,34 @@
       <h1>Projects</h1>
       <p id="project-message"></p>
 
-      <section class="project-section">
-        <h2>Create a Project</h2>
-        <label for="project-name">Project name</label>
-        <input type="text" id="project-name" required>
-        <button type="button" id="create-project-button">Create Project</button>
-      </section>
+      <div class="project-grid">
+        <section class="project-section">
+          <h2>Create a Project</h2>
+          <label for="project-name">Project name</label>
+          <input type="text" id="project-name" required>
+          <button type="button" id="create-project-button">Create Project</button>
+        </section>
 
-      <section class="project-section">
-        <h2>Add a User</h2>
-        <label for="project-select">Project</label>
-        <select id="project-select">
-          <option value="">Select a project</option>
-        </select>
+        <section class="project-section">
+          <h2>Add a User</h2>
+          <label for="project-select">Project</label>
+          <select id="project-select">
+            <option value="">Select a project</option>
+          </select>
 
-        <label for="member-username">Username</label>
-        <input type="text" id="member-username" required>
-        <button type="button" id="add-member-button">Add User</button>
-      </section>
+          <label for="member-username">Username</label>
+          <input type="text" id="member-username" required>
+          <button type="button" id="add-member-button">Add User</button>
+        </section>
+
+        <section class="project-section full-width">
+          <h2>Project Telemetry</h2>
+          <label for="telemetry-project-select">Project</label>
+          <select id="telemetry-project-select">
+            <option value="">Select a project</option>
+          </select>
+        </section>
+      </div>
     </main>
 
     <script src="/js/auth.js"></script>

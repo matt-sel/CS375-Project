@@ -1,5 +1,19 @@
 const projectSelect = document.getElementById("project-select");
+const telemetryProjectSelect = document.getElementById("telemetry-project-select");
 const message = document.getElementById("project-message");
+
+function populateProjectOptions(selectElement) {
+  if (!selectElement) {
+    return;
+  }
+
+  selectElement.replaceChildren();
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Select a project";
+  selectElement.appendChild(defaultOption);
+}
 
 async function loadProjects() {
   const response = await fetch("/api/projects");
@@ -9,18 +23,27 @@ async function loadProjects() {
 
   const projects = await response.json();
 
-  projectSelect.replaceChildren();
-
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "";
-  defaultOption.textContent = "Select a project";
-  projectSelect.appendChild(defaultOption);
+  populateProjectOptions(projectSelect);
+  populateProjectOptions(telemetryProjectSelect);
 
   projects.forEach((project) => {
-    const option = document.createElement("option");
-    option.value = project.id;
-    option.textContent = project.name;
-    projectSelect.appendChild(option);
+    const projectOption = document.createElement("option");
+    projectOption.value = project.id;
+    projectOption.textContent = project.name;
+
+    if (projectSelect) {
+      const option = document.createElement("option");
+      option.value = project.id;
+      option.textContent = project.name;
+      projectSelect.appendChild(option);
+    }
+
+    if (telemetryProjectSelect) {
+      const telemetryOption = document.createElement("option");
+      telemetryOption.value = project.id;
+      telemetryOption.textContent = project.name;
+      telemetryProjectSelect.appendChild(telemetryOption);
+    }
   });
 }
 

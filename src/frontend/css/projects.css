@@ -1,13 +1,21 @@
-main {
-    max-width: 600px;
+.project-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .project-section {
-    margin: 20px 0;
+    margin: 0;
     padding: 20px;
     background-color: #252525;
     border: 1px solid #333;
     border-radius: 6px;
+}
+
+.project-section.full-width {
+    grid-column: 1;
+    grid-column-end: 3;
 }
 
 .project-section h2 {
