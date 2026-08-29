@@ -87,6 +87,85 @@ async function loadComments(ticketId, panel) {
   }
 }
 
+function showTagEditor(ticketId, currentTags, container, onSave) {
+  let workingTags = [...currentTags];
+  container.innerHTML = "";
+
+  const pillsRow = document.createElement("div");
+  pillsRow.className = "tag-edit-pills";
+
+  function renderWorkingPills() {
+    pillsRow.innerHTML = "";
+    workingTags.forEach((tag, index) => {
+      const pill = document.createElement("span");
+      pill.className = "tag-pill";
+      const label = document.createElement("span");
+      label.textContent = tag;
+      const removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.textContent = "×";
+      removeButton.addEventListener("click", () => {
+        workingTags.splice(index, 1);
+        renderWorkingPills();
+      });
+      pill.appendChild(label);
+      pill.appendChild(removeButton);
+      pillsRow.appendChild(pill);
+    });
+  }
+  renderWorkingPills();
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Add a tag...";
+
+  const addButton = document.createElement("button");
+  addButton.type = "button";
+  addButton.textContent = "Add";
+  addButton.addEventListener("click", () => {
+    const value = input.value.trim();
+    if (value && !workingTags.includes(value)) {
+      workingTags.push(value);
+      input.value = "";
+      renderWorkingPills();
+    }
+  });
+
+  const saveButton = document.createElement("button");
+  saveButton.type = "button";
+  saveButton.textContent = "Save";
+  saveButton.addEventListener("click", async () => {
+    const res = await fetch(`/api/tickets/${ticketId}/tags`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tags: workingTags })
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.error);
+      return;
+    }
+    onSave(workingTags);
+  });
+
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.textContent = "Cancel";
+  cancelButton.addEventListener("click", () => {
+    onSave(currentTags);
+  });
+
+  const row = document.createElement("div");
+  row.className = "tag-edit-row";
+  row.appendChild(input);
+  row.appendChild(addButton);
+  row.appendChild(saveButton);
+  row.appendChild(cancelButton);
+
+  container.appendChild(pillsRow);
+  container.appendChild(row);
+}
+
 async function getProjects() {
   const projectSelect = document.getElementById("project-select");
 
@@ -220,17 +299,31 @@ async function getTickets() {
       ticket.appendChild(createdBy);
       ticket.appendChild(description);
 
-      if (tick.tags[0]) {
-        const tags = document.createElement("div");
-        tags.className = "ticket-tags";
-        tick.tags.forEach((tag) => {
+      const tagsContainer = document.createElement("div");
+      tagsContainer.className = "ticket-tags";
+
+      function renderTagPills(tagList) {
+        tagsContainer.innerHTML = "";
+        tagList.forEach((tag) => {
+          if (!tag) return;
           const pill = document.createElement("span");
           pill.className = "tag-pill";
           pill.textContent = tag;
-          tags.appendChild(pill);
+          tagsContainer.appendChild(pill);
         });
-        ticket.append(tags);
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "edit-tags-button";
+        editButton.textContent = "✎ Edit tags";
+        editButton.addEventListener("click", () => {
+          showTagEditor(tick.id, tagList.filter(Boolean), tagsContainer, renderTagPills);
+        });
+        tagsContainer.appendChild(editButton);
       }
+
+      renderTagPills(tick.tags);
+      ticket.append(tagsContainer);
 
       ticket.appendChild(status);
       ticket.appendChild(timeCreated);

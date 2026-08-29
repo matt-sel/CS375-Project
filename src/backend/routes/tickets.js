@@ -18,6 +18,7 @@ router.get("/", async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT tickets.*, users.username,
+            assignee.username AS assigned_username,
             ARRAY_AGG(tags.name) AS tags,
             COUNT(DISTINCT votes.user_id) AS vote_count
             FROM tickets
@@ -25,12 +26,13 @@ router.get("/", async (req, res) => {
             JOIN project_members ON tickets.project_id = project_members.project_id
                 AND project_members.user_id = $2
             JOIN users ON tickets.user_id = users.id
+            LEFT JOIN users assignee ON tickets.assigned_to = assignee.id
             LEFT JOIN ticket_tags ON tickets.id = ticket_tags.ticket_id
             LEFT JOIN tags ON ticket_tags.tag_id = tags.id
             LEFT JOIN votes on tickets.id = votes.ticket_id
 
             WHERE tickets.project_id = $1
-            GROUP BY tickets.id, users.username
+            GROUP BY tickets.id, users.username, assignee.username
             ORDER BY tickets.created_at DESC`,
             [projectId, req.session.userId]
         );
@@ -128,6 +130,78 @@ router.post("/", async (req, res) => {
     return res.status(500).json({
       error: "Server error"
     });
+  }
+});
+
+router.put("/:ticketId/tags", async (req, res) => {
+  if (!isLoggedIn(req, res)) {
+    return;
+  }
+
+  const tags = Array.isArray(req.body.tags) ? req.body.tags : [];
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const ticketResult = await client.query(
+      "SELECT project_id FROM tickets WHERE id = $1",
+      [req.params.ticketId]
+    );
+    if (ticketResult.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+
+    const membership = await client.query(
+      "SELECT 1 FROM project_members WHERE project_id = $1 AND user_id = $2",
+      [ticketResult.rows[0].project_id, req.session.userId]
+    );
+    if (membership.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(403).json({ error: "You are not a member of this project" });
+    }
+
+    await client.query(
+      "DELETE FROM ticket_tags WHERE ticket_id = $1",
+      [req.params.ticketId]
+    );
+
+    for (const tagName of tags) {
+      const trimmed = tagName.trim();
+      if (!trimmed) {
+        continue;
+      }
+
+      let tagResult = await client.query(
+        "SELECT id FROM tags WHERE name = $1",
+        [trimmed]
+      );
+
+      let tagId;
+      if (tagResult.rows.length === 0) {
+        const inserted = await client.query(
+          "INSERT INTO tags (name, category) VALUES ($1, $2) RETURNING id",
+          [trimmed, "general"]
+        );
+        tagId = inserted.rows[0].id;
+      } else {
+        tagId = tagResult.rows[0].id;
+      }
+
+      await client.query(
+        "INSERT INTO ticket_tags (ticket_id, tag_id) VALUES ($1, $2)",
+        [req.params.ticketId, tagId]
+      );
+    }
+
+    await client.query("COMMIT");
+    return res.json({ message: "Tags updated" });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    return res.status(500).json({ error: "Server error" });
+  } finally {
+    client.release();
   }
 });
 
