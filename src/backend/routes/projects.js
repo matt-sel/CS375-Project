@@ -99,6 +99,84 @@ router.get("/:projectId/members", async (req, res) => {
   }
 });
 
+async function telemetryQuery(req, res, query) {
+  if (!isLoggedIn(req, res)) return;
+  try {
+    const result = await pool.query(query, [req.params.projectId]);
+    return res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({
+      error: "Server error"
+    })
+  }
+}
+
+router.get("/:projectId/telemetry/tickets-by-status", (req, res) => {
+  return telemetryQuery(req, res,
+    `SELECT status, COUNT(*) as count
+      FROM tickets
+      WHERE project_id = $1
+      GROUP BY status`
+  );
+});
+
+router.get("/:projectId/telemetry/tickets-by-day", (req, res) => {
+  return telemetryQuery(req, res,
+    `SELECT 
+      DATE(created_at) as day,
+      COUNT(CASE WHEN closed_at IS NULL THEN 1 END) as open, -- Open ticks
+      COUNT(CASE WHEN closed_at IS NOT NULL THEN 1 END) as closed -- Closed ticks
+      FROM tickets
+      WHERE project_id = $1
+      GROUP BY DATE(created_at)
+      ORDER BY DATE(created_at) ASC -- Sort by oldest to newest`
+  );
+});
+
+router.get("/:projectId/telemetry/top-contributors", (req, res) => {
+  return telemetryQuery(req, res,
+    `SELECT 
+      users.username,
+      COUNT(*) as tickets_closed
+      FROM tickets
+      JOIN users ON tickets.user_id = users.id
+      WHERE tickets.project_id = $1 AND tickets.closed_at IS NOT NULL -- Only tickets that are closed
+      GROUP BY users.username
+      ORDER BY tickets_closed DESC
+      LIMIT 5`
+  );
+});
+
+router.get("/:projectId/telemetry/top-voted-tickets", (req, res) => {
+  return telemetryQuery(req, res,
+    `SELECT 
+      tickets.id,
+      tickets.title,
+      COUNT(votes.user_id) as vote_count
+      FROM tickets
+      LEFT JOIN votes ON tickets.id = votes.ticket_id -- Case for when tick has no votes
+      WHERE tickets.project_id = $1
+      GROUP BY tickets.id, tickets.title
+      ORDER BY vote_count DESC
+      LIMIT 5 -- We want top 5`
+  );
+});
+
+router.get("/:projectId/telemetry/cumulative-closed", (req, res) => {
+  return telemetryQuery(req, res,
+    `SELECT 
+      DATE(closed_at) as day,
+      COUNT(*) as daily_count,
+      -- https://www.geeksforgeeks.org/postgresql/compute-a-running-total-in-postgresql/
+      -- We are summing over a count to give use a running total over dates
+      SUM(COUNT(*)) OVER (ORDER BY DATE(closed_at)) as cumulative_count
+      FROM tickets
+      WHERE project_id = $1 AND closed_at IS NOT NULL
+      GROUP BY DATE(closed_at)
+      ORDER BY DATE(closed_at) ASC`
+  );
+});
+
 router.post("/:projectId/members", async (req, res) => {
   if (!isLoggedIn(req, res)) {
     return;

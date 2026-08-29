@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/projects.css">
     <link rel="icon" type="image/png" href="/favicon.png">
+    <!-- import: https://www.chartjs.org/docs/latest/getting-started/ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
   </head>
 
   <body>
@@ -56,6 +58,33 @@
           <select id="telemetry-project-select">
             <option value="">Select a project</option>
           </select>
+          
+          <div id="telemetry-charts" class="dashboard-grid">
+            <div class="dashboard-bg">
+              <h3>Ticket Status</h3>
+              <canvas id="status-chart"></canvas>
+            </div>
+            
+            <div class="dashboard-bg">
+              <h3>Open vs Closed Over Time</h3>
+              <canvas id="tickets-by-day-chart"></canvas>
+            </div>
+
+            <div class="dashboard-bg">
+              <h3>Top Contributors</h3>
+              <canvas id="top-contributors-chart"></canvas>
+            </div>
+
+            <div class="dashboard-bg">
+              <h3>Most Voted Tickets</h3>
+              <canvas id="top-voted-tickets-chart"></canvas>
+            </div>
+
+            <div class="dashboard-bg" style="grid-column: 1; grid-column-end: 3;">
+              <h3>Cumulative Tickets Closed</h3>
+              <canvas id="cumulative-closed-chart"></canvas>
+            </div>
+          </div>
         </section>
       </div>
     </main>

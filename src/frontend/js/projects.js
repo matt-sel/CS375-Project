@@ -101,3 +101,261 @@ document.getElementById("add-member-button").addEventListener("click", async () 
 loadProjects().catch(() => {
   message.textContent = "Unable to load projects.";
 });
+
+let statusChart = null;
+let ticketsByDayChart = null;
+let topContributorsChart = null;
+let topVotedTicketsChart = null;
+let cumulativeClosedChart = null;
+
+async function loadTicketStatusChart(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  const response = await fetch(`/api/projects/${projectId}/telemetry/tickets-by-status`);
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+  const labels = data.map(row => row.status);
+  const counts = data.map(row => parseInt(row.count));
+  const canvas = document.getElementById("status-chart");
+
+  // Have to remove any older charts before rebuilding
+  if (statusChart) {
+    statusChart.destroy();
+  }
+
+  statusChart = new Chart(canvas, {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: [
+          "#e6cc75",
+          "#ff6b6b",
+          "#4ecdc4",
+          "#95e1d3"
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      }
+    }
+  });
+}
+
+async function loadTicketsByDayChart(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  const response = await fetch(`/api/projects/${projectId}/telemetry/tickets-by-day`);
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+  const labels = data.map(row => row.day);
+  const openCounts = data.map(row => parseInt(row.open));
+  const closedCounts = data.map(row => parseInt(row.closed));
+  const canvas = document.getElementById("tickets-by-day-chart");
+
+  if (ticketsByDayChart) {
+    ticketsByDayChart.destroy();
+  }
+
+  ticketsByDayChart = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Open",
+          data: openCounts,
+          backgroundColor: "#e6cc75"
+        },
+        {
+          label: "Closed",
+          data: closedCounts,
+          backgroundColor: "#4ecdc4"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        legend: {
+          display: true
+        }
+      }
+    }
+  });
+}
+
+async function loadCumulativeClosedChart(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  const response = await fetch(`/api/projects/${projectId}/telemetry/cumulative-closed`);
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+  const labels = data.map(row => row.day);
+  const cumulativeCounts = data.map(row => parseInt(row.cumulative_count));
+  const canvas = document.getElementById("cumulative-closed-chart");
+
+  if (cumulativeClosedChart) {
+    cumulativeClosedChart.destroy();
+  }
+
+  cumulativeClosedChart = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Cumulative Tickets Closed",
+        data: cumulativeCounts,
+        borderColor: "#4ecdc4",
+        backgroundColor: "rgba(78, 205, 196, 0.1)",
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+async function loadTopContributorsChart(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  const response = await fetch(`/api/projects/${projectId}/telemetry/top-contributors`);
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+  const labels = data.map(row => row.username);
+  const counts = data.map(row => parseInt(row.tickets_closed));
+  const canvas = document.getElementById("top-contributors-chart");
+
+  if (topContributorsChart) {
+    topContributorsChart.destroy();
+  }
+
+  topContributorsChart = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Tickets Closed",
+        data: counts,
+        backgroundColor: "#e6cc75"
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+async function loadTopVotedTicketsChart(projectId) {
+  if (!projectId) {
+    return;
+  }
+
+  const response = await fetch(`/api/projects/${projectId}/telemetry/top-voted-tickets`);
+  if (!response.ok) {
+    return;
+  }
+
+  const data = await response.json();
+  const labels = data.map(row => row.title);
+  const votes = data.map(row => parseInt(row.vote_count));
+  const canvas = document.getElementById("top-voted-tickets-chart");
+
+  if (topVotedTicketsChart) {
+    topVotedTicketsChart.destroy();
+  }
+
+  topVotedTicketsChart = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Votes",
+        data: votes,
+        backgroundColor: "#ff6b6b"
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+// Update all the charts whenever the project selection changes
+telemetryProjectSelect.addEventListener("change", (e) => {
+  loadTicketStatusChart(e.target.value);
+  loadTicketsByDayChart(e.target.value);
+  loadTopContributorsChart(e.target.value);
+  loadTopVotedTicketsChart(e.target.value);
+  loadCumulativeClosedChart(e.target.value);
+});
