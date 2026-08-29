@@ -205,6 +205,49 @@ router.put("/:ticketId/tags", async (req, res) => {
   }
 });
 
+router.patch("/:ticketId/assign", async (req, res) => {
+  if (!isLoggedIn(req, res)) {
+    return;
+  }
+  try {
+    const ticket = await pool.query(
+      "SELECT project_id FROM tickets WHERE id = $1",
+      [req.params.ticketId]
+    );
+    if (ticket.rows.length === 0) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+    const projectId = ticket.rows[0].project_id;
+
+    const membership = await pool.query(
+      "SELECT 1 FROM project_members WHERE project_id = $1 AND user_id = $2",
+      [projectId, req.session.userId]
+    );
+    if (membership.rows.length === 0) {
+      return res.status(403).json({ error: "You are not a member of this project" });
+    }
+
+    const assignedTo = req.body.assignedTo || null;
+    if (assignedTo) {
+      const assigneeCheck = await pool.query(
+        "SELECT 1 FROM project_members WHERE project_id = $1 AND user_id = $2",
+        [projectId, assignedTo]
+      );
+      if (assigneeCheck.rows.length === 0) {
+        return res.status(400).json({ error: "User is not a member of this project" });
+      }
+    }
+
+    await pool.query(
+      "UPDATE tickets SET assigned_to = $1 WHERE id = $2",
+      [assignedTo, req.params.ticketId]
+    );
+    return res.json({ message: "Ticket assignment updated" });
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 router.get("/:ticketId/comments", async (req, res) => {
   if (!isLoggedIn(req, res)) {
     return;
